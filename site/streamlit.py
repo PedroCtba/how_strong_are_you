@@ -4,7 +4,7 @@ import pandas as pd
 
 # Load the OpenPowerlifting data
 @st.cache_data(ttl=60*60)
-def load_data(path=r"C:\\Users\\PedroMiyasaki\\OneDrive - DHAUZ\\Área de Trabalho\\Projetos\\PESSOAL\\how_strong_are_you\\data\\openpowerlifting_clean.pkl"):
+def load_data(path="../data/openpowerlifting_clean.pkl"):
     df = pd.read_pickle(path)
     return df
 
