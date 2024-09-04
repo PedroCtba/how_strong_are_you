@@ -1,10 +1,11 @@
 def main(raw_data_path, clean_data_path):
     """
-    This function cleans raw data from a CSV file and saves the cleaned data to another CSV file.
+    This function cleans raw data from a CSV file and saves the cleaned data to a parquet file.
+    The function also makes the numerics fields as small as they can be.
 
     Parameters:
         raw_data_path (str): The path to the raw data CSV file.
-        clean_data_path (str): The path to save the cleaned data CSV file.
+        clean_data_path (str): The path to save the cleaned parquet file.
 
     Returns:
         None
@@ -36,12 +37,19 @@ def main(raw_data_path, clean_data_path):
     # Dropar colunas de 4 tentativa
     df = df.drop(["Bench4Kg", "Squat4Kg", "Deadlift4Kg"])
 
+    # Shrink data types
+    df = df.with_columns(pl.all().shrink_dtype())
+
     # Save data on clean path
-    df.write_csv(clean_data_path)
+    df.write_parquet(clean_data_path)
 
     # Return None
     return None
 
 # Run as script
 if __name__ == "__main__":
-    main(raw_data_path=r"C:\Users\PedroMiyasaki\OneDrive - DHAUZ\Área de Trabalho\Projetos\PESSOAL\how_strong_are_you\data\openpowerlifting-2024-01-06-4c732975.csv", clean_data_path=r"C:\Users\PedroMiyasaki\OneDrive - DHAUZ\Área de Trabalho\Projetos\PESSOAL\how_strong_are_you\data\openpowerlifting_clean.csv")
+    # Import raw path
+    from secret import path_to_raw_file, clean_data_path
+
+    # Run script
+    main(raw_data_path=path_to_raw_file, clean_data_path=clean_data_path)

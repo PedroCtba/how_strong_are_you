@@ -1,11 +1,13 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+import os
 
 # Load the OpenPowerlifting data
 @st.cache_data(ttl=60*60)
-def load_data(path="openpowerlifting_clean.pkl"):
-    df = pd.read_pickle(path)
+def load_data():
+    abs_path = os.path.abspath("openpowerlifting_clean.parquet")
+    df = pd.read_pickle(abs_path)
     return df
 
 @st.cache_data(ttl=300)
