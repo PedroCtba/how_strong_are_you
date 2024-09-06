@@ -7,7 +7,7 @@ from objects import sex, weight_class, modality, division, federation, country, 
 # Load the OpenPowerlifting data
 @st.cache_data(ttl=60*60)
 def load_data():
-    abs_path = os.path.abspath("../data/openpowerlifting_clean.parquet")
+    abs_path = os.path.join(os.path.dirname(__file__), "data", "openpowerlifting_clean.parquet")
     df = pd.read_parquet(abs_path)
     return df
 
