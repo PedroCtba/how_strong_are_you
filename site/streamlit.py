@@ -2,17 +2,30 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import os
+from objects import sex, weight_class, modality, division, federation, country, labels
 
 # Load the OpenPowerlifting data
 @st.cache_data(ttl=60*60)
 def load_data():
-    abs_path = os.path.abspath("openpowerlifting_clean.parquet")
-    df = pd.read_pickle(abs_path)
+    abs_path = os.path.abspath("../data/openpowerlifting_clean.parquet")
+    df = pd.read_parquet(abs_path)
     return df
 
 @st.cache_data(ttl=300)
-def filter_data(df, sex, weight_class, modality):
-    return df.loc[(df["Sex"] == sex) & (df["WeightClassKg"] == weight_class) & (df["Equipment"] == modality)]
+def filter_data(df, sex=None, weight_class=None, modality=None, division=None, federation=None, country=None):
+    if sex: 
+        df = df[df["Sex"] == sex]
+    if weight_class: 
+        df = df[df["WeightClassKg"] == weight_class]
+    if modality: 
+        df = df[df["Equipment"] == modality]
+    if division: 
+        df = df[df["Division"] == division]
+    if federation: 
+        df = df[df["Federation"] == federation]
+    if country: 
+        df = df[df["MeetCountry"] == country]
+    return df
 
 # Create a function to calculate the user's total
 def calculate_total(squat, bench, deadlift):
@@ -41,43 +54,33 @@ def compare_to_group(df, user_total, group_percentile=0.9):
 # Language selection
 lang = st.selectbox("Choose your language / Escolha seu idioma", ["English", "Português"])
 
-# Define labels and text in both languages
-labels = {
-    "title": {"English": "How Strong Are You?","Português": "Quão Forte Você é?"},
-    "sex": {"English": "Sex", "Português": "Sexo"},
-    "weight_class": {"English": "Weight Class", "Português": "Classe de Peso"},
-    "modality": {"English": "Modality", "Português": "Modalidade"},
-    "squat": {"English": "Squat", "Português": "Agachamento"},
-    "bench": {"English": "Bench", "Português": "Supino"},
-    "deadlift": {"English": "Deadlift", "Português": "Levantamento Terra"},
-    "submit": {"English": "Ready to display results!", "Português": "Pronto para exibir os resultados!"},
-    "missing_data": {"English": "Please enter all your lift values to see your position.",
-                     "Português": "Por favor, insira todos os valores para visualizar sua posição."},
-    "distribution": {"English": "Distribution of {lift} Values", "Português": "Distribuição dos Valores de {lift}"},
-    "percentile": {"English": "Your Percentile in Each Lift", "Português": "Seu Percentil em Cada Levantamento"},
-    "comparison": {"English": "Comparison to Top Lifters", "Português": "Comparação com os Melhores Levantadores"},
-    "weakest_strongest": {
-            "English": "Weakest and Strongest Lifts Relative to percentile",
-            "Português": "Melhor e pior levantamento relativo ao percentil"}
-    }
-
 # Main app
 st.title(labels["title"][lang])
 
-# Get user input based on selected language
-sex = st.selectbox(labels["sex"][lang], ["M", "F"])
-weight_class = st.selectbox(labels["weight_class"][lang], [
-    "90", "75", "100", "82.5", "67.5", "110", "125", "93", "83", "60",
-    "105", "56", "74", "52", "120", "63", "74.8", "66"
-])
-modality = st.selectbox(labels["modality"][lang], ["Raw", "Wraps", "Multi-ply", "Single-ply", "Unlimited", "Straps"])
+# Get user input based on selected language, allowing "All" or empty inputs
+sex = st.selectbox(labels["sex"][lang], ["All"] + sex)
+weight_class = st.selectbox(labels["weight_class"][lang], ["All"] + weight_class)
+modality = st.selectbox(labels["modality"][lang], ["All"] + modality)
+division = st.selectbox(labels["division"][lang], ["All"] + division)
+federation = st.selectbox(labels["federation"][lang], ["All"] + federation)
+country = st.selectbox(labels["country"][lang], ["All"] + country)
+
+# Convert "All" selections to None for filtering
+sex = None if sex == "All" else sex
+weight_class = None if weight_class == "All" else weight_class
+modality = None if modality == "All" else modality
+division = None if division == "All" else division
+federation = None if federation == "All" else federation
+country = None if country == "All" else country
+
+# Get user lift numbers
 squat = st.number_input(labels["squat"][lang], min_value=0, max_value=500, step=1)
 bench = st.number_input(labels["bench"][lang], min_value=0, max_value=500, step=1)
 deadlift = st.number_input(labels["deadlift"][lang], min_value=0, max_value=500, step=1)
 
 # Load and filter the data
 df = load_data()
-df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality)
+df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality, division=division, federation=federation, country=country)
 
 # Calculate the user's total
 user_total = calculate_total(squat, bench, deadlift)
@@ -103,16 +106,17 @@ if squat > 0 and bench > 0 and deadlift > 0:
         fig.add_vline(x=user_total, line_dash="dash", line_color="red")
         st.plotly_chart(fig)
 
-    # Calculate the percentile for each lift
+    # Calculate the percentile for each lift and total
+    total_percentile = calculate_percentile(df, "TotalKg", user_total).round(2)
     squat_percentile = calculate_percentile(df, "Best3SquatKg", squat).round(2)
     bench_percentile = calculate_percentile(df, "Best3BenchKg", bench).round(2)
     deadlift_percentile = calculate_percentile(df, "Best3DeadliftKg", deadlift).round(2)
 
     # Display the percentile for each lift
-    st.subheader(labels["percentile"][lang])
-    st.write(f"Squat: {squat_percentile}th percentile")
-    st.write(f"Bench: {bench_percentile}th percentile")
-    st.write(f"Deadlift: {deadlift_percentile}th percentile")
+    st.subheader(labels["percentile_generic"][lang])
+    st.write(labels["percentile_specific"][lang].format(lift=labels["squat"][lang], percentile=squat_percentile))
+    st.write(labels["percentile_specific"][lang].format(lift=labels["bench"][lang], percentile=bench_percentile))
+    st.write(labels["percentile_specific"][lang].format(lift=labels["deadlift"][lang], percentile=deadlift_percentile))
 
     # Determine the user's weakest and strongest lift
     weakest_lift = min(squat_percentile, bench_percentile, deadlift_percentile)
@@ -133,8 +137,8 @@ if squat > 0 and bench > 0 and deadlift > 0:
         strongest_lift_name = labels["deadlift"][lang]
 
     st.subheader(labels["weakest_strongest"][lang])
-    st.write(f"Weakest Lift: {weakest_lift_name}")
-    st.write(f"Strongest Lift: {strongest_lift_name})")
+    st.write(f"{labels["weakest"][lang]} {weakest_lift_name}")
+    st.write(f"{labels["strongest"][lang]} {strongest_lift_name}")
 
 else:
     st.warning(labels["missing_data"][lang])
