@@ -75,4 +75,7 @@ labels = {
     "filter_all": {
         "English": "All",
         "Português": "All"},
+    "no_data": {
+        "English": "No data found for the selected filters. Please adjust your filters, try diferent filters.",
+        "Português": "Nenhum dado encontrado para os filtros selecionados. Por favor, ajuste seus filtros.",}
     }
