@@ -53,7 +53,7 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
     
     # Add annotation for "You are here" in red
     fig.add_annotation(
-        x=user_value + user_value * .01,
+        x=user_value + user_value * .1,
         showarrow=False,
         y=max(df[lift].value_counts()) * 0.9,  # Position annotation at 90% of max y-value
         text=annotation_text,
