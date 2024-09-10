@@ -94,12 +94,12 @@ lang = st.selectbox("Choose your language / Escolha seu idioma", ["English", "Po
 st.title(labels["title"][lang])
 
 # Get user input based on selected language, allowing "All" or empty inputs
-sex = st.selectbox(labels["sex"][lang], ["All"] + sex)
-weight_class = st.selectbox(labels["weight_class"][lang], ["All"] + weight_class)
-modality = st.selectbox(labels["modality"][lang], ["All"] + modality)
-division = st.selectbox(labels["division"][lang], ["All"] + division)
-federation = st.selectbox(labels["federation"][lang], ["All"] + federation)
-country = st.selectbox(labels["country"][lang], ["All"] + country)
+sex = st.selectbox(labels["sex"][lang], [labels["filter_all"][lang]] + sex)
+weight_class = st.selectbox(labels["weight_class"][lang], [labels["filter_all"][lang]] + weight_class)
+modality = st.selectbox(labels["modality"][lang], [labels["filter_all"][lang]] + modality)
+division = st.selectbox(labels["division"][lang], [labels["filter_all"][lang]] + division)
+federation = st.selectbox(labels["federation"][lang], [labels["filter_all"][lang]] + federation)
+country = st.selectbox(labels["country"][lang], [labels["filter_all"][lang]] + country)
 
 # Convert "All" selections to None for filtering
 sex = None if sex == "All" else sex
