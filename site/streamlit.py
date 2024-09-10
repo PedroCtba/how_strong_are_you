@@ -76,7 +76,7 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
         margin=dict(l=50, r=50, t=80, b=50),
         xaxis=dict(showgrid=False),  # Hide vertical grid lines
         yaxis=dict(showgrid=True, gridcolor="lightgray"),  # Light gray horizontal grid lines
-        title_x=0.5,  # Center title
+        title_x=0.25,  # Center title
         title_y=0.95  # Slightly adjust title position vertically
     )
     
