@@ -46,12 +46,25 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
     annotation_text = "Você está aqui" if lang == "Português" else "You are here"
     
     # Create a customized histogram plot
-    fig = px.histogram(df, nbins=100, x=lift, title=labels["distribution"][lang].format(lift=lift), color_discrete_sequence=[color])
+    fig = px.histogram(df, nbins=100, x=lift, title=labels["distribution"][lang].format(lift=x_label), color_discrete_sequence=[color])
     
     # Add vertical line to represent user value
-    fig.add_vline(x=user_value, line_dash="dash", line_color="red", annotation_text=annotation_text, 
-                  annotation_position="top right")
+    fig.add_vline(x=user_value, line_dash="dash", line_color="red")
     
+    # Add annotation for "You are here" in red
+    fig.add_annotation(
+        x=user_value,
+        y=max(df[lift].value_counts()) * 0.9,  # Position annotation at 90% of max y-value
+        text=annotation_text,
+        showarrow=True,
+        arrowhead=2,
+        arrowsize=1.5,
+        arrowcolor="red",
+        ax=0,  # Shift the arrow slightly to the left
+        ay=-40,
+        font=dict(color="red", size=14, family="Arial")  # Red color for the text
+    )
+
     # Customize layout for better aesthetics
     fig.update_layout(
         title_font_size=20,
@@ -64,6 +77,7 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
         xaxis=dict(showgrid=False),  # Hide vertical grid lines
         yaxis=dict(showgrid=True, gridcolor="lightgray"),  # Light gray horizontal grid lines
         title_x=0.5,  # Center title
+        title_y=0.95  # Slightly adjust title position vertically
     )
     
     return fig
