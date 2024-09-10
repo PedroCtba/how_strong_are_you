@@ -8,7 +8,8 @@ from objects import sex, weight_class, modality, division, federation, country, 
 @st.cache_data(ttl=60*60)
 def load_data():
     abs_path = os.path.join(os.getcwd(), "data", "openpowerlifting_clean.parquet")
-    df = pd.read_parquet(abs_path)
+    columns = ["Sex", "WeightClassKg", "Equipment", "Division", "Federation", "MeetCountry", "Best3SquatKg", "Best3BenchKg", "Best3DeadliftKg", "TotalKg"]
+    df = pd.read_parquet(abs_path, columns=columns)
     return df
 
 @st.cache_data(ttl=300)
