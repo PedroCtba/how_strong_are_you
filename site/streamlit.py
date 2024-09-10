@@ -114,15 +114,15 @@ squat = st.number_input(labels["squat"][lang], min_value=0, max_value=500, step=
 bench = st.number_input(labels["bench"][lang], min_value=0, max_value=500, step=1)
 deadlift = st.number_input(labels["deadlift"][lang], min_value=0, max_value=500, step=1)
 
+# Load and filter the data
+df = load_data()
+df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality, division=division, federation=federation, country=country)
+
 # Calculate the user's total
 user_total = calculate_total(squat, bench, deadlift)
 
 # Only display if all inputs are valid
 if squat > 0 and bench > 0 and deadlift > 0:
-    # Load and filter the data
-    df = load_data()
-    df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality, division=division, federation=federation, country=country)
-
     st.success(labels["submit"][lang])
 
     # Plot the user's position for each lift using tabs with different colors and language-based labels
@@ -176,4 +176,4 @@ if squat > 0 and bench > 0 and deadlift > 0:
     st.write(f"{labels["strongest"][lang]} {strongest_lift_name}")
 
 else:
-    st.warning(labels["missing_data"][lang])
+    st.warning(labels["awaiting_filters"][lang])
