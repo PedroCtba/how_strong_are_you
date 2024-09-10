@@ -32,14 +32,40 @@ def filter_data(df, sex=None, weight_class=None, modality=None, division=None, f
 def calculate_total(squat, bench, deadlift):
     return squat + bench + deadlift
 
-# Create a function to plot the user's position
-def plot_position(df, lift, user_value, color):
+# Create a function to plot the user's position with language-based labels and improved aesthetics
+def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None):
     if df.empty:
         st.error(f"No data available for {lift}")
         return None
     
-    fig = px.histogram(df, nbins=100, x=lift, title=f"Distribution of {lift} Values", color_discrete_sequence=[color])
-    fig.add_vline(x=user_value, line_dash="dash", line_color="red")
+    # Set default labels in both languages
+    y_label = y_label or (labels["y_axis_label"][lang] if "y_axis_label" in labels else "Frequency")
+    x_label = x_label or lift
+
+    # Text for the "You are here" annotation in both languages
+    annotation_text = "Você está aqui" if lang == "Português" else "You are here"
+    
+    # Create a customized histogram plot
+    fig = px.histogram(df, nbins=100, x=lift, title=labels["distribution"][lang].format(lift=lift), color_discrete_sequence=[color])
+    
+    # Add vertical line to represent user value
+    fig.add_vline(x=user_value, line_dash="dash", line_color="red", annotation_text=annotation_text, 
+                  annotation_position="top right")
+    
+    # Customize layout for better aesthetics
+    fig.update_layout(
+        title_font_size=20,
+        xaxis_title=x_label,  # Use the translated x-axis label
+        yaxis_title=y_label,  # Use the translated y-axis label
+        font=dict(family="Arial", size=14, color="black"),
+        plot_bgcolor="rgba(0, 0, 0, 0)",  # Transparent background
+        paper_bgcolor="rgba(0, 0, 0, 0)",  # Transparent paper background
+        margin=dict(l=50, r=50, t=80, b=50),
+        xaxis=dict(showgrid=False),  # Hide vertical grid lines
+        yaxis=dict(showgrid=True, gridcolor="lightgray"),  # Light gray horizontal grid lines
+        title_x=0.5,  # Center title
+    )
+    
     return fig
 
 # Function to calculate percentile
@@ -90,21 +116,20 @@ user_total = calculate_total(squat, bench, deadlift)
 if squat > 0 and bench > 0 and deadlift > 0:
     st.success(labels["submit"][lang])
 
-    # Plot the user's position for each lift using tabs with different colors
-    tab1, tab2, tab3, tab4 = st.tabs(["Squat", "Bench", "Deadlift", "Total"])
+    # Plot the user's position for each lift using tabs with different colors and language-based labels
+    tab1, tab2, tab3, tab4 = st.tabs([labels["squat"][lang], labels["bench"][lang], labels["deadlift"][lang], labels["total"][lang]])
     
     with tab1:
-        st.plotly_chart(plot_position(df, "Best3SquatKg", squat, "blue"))
+        st.plotly_chart(plot_position(df, "Best3SquatKg", squat, "blue", lang, x_label=labels["squat"][lang]))
     
     with tab2:
-        st.plotly_chart(plot_position(df, "Best3BenchKg", bench, "green"))
+        st.plotly_chart(plot_position(df, "Best3BenchKg", bench, "green", lang, x_label=labels["bench"][lang]))
     
     with tab3:
-        st.plotly_chart(plot_position(df, "Best3DeadliftKg", deadlift, "orange"))
+        st.plotly_chart(plot_position(df, "Best3DeadliftKg", deadlift, "orange", lang, x_label=labels["deadlift"][lang]))
     
     with tab4:
-        fig = px.histogram(df, x="TotalKg", title=labels["distribution"][lang].format(lift="Total"), color_discrete_sequence=["purple"])
-        fig.add_vline(x=user_total, line_dash="dash", line_color="red")
+        fig = plot_position(df, "TotalKg", user_total, "purple", lang, x_label=labels["total"][lang])
         st.plotly_chart(fig)
 
     # Calculate the percentile for each lift and total
