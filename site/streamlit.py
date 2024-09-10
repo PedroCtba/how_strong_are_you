@@ -43,7 +43,7 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
     x_label = x_label or lift
 
     # Text for the "You are here" annotation in both languages
-    annotation_text = "Você está aqui" if lang == "Português" else "You are here"
+    annotation_text = "Você está aqui" if lang == "Português" else "You are here!"
     
     # Create a customized histogram plot
     fig = px.histogram(df, nbins=100, x=lift, title=labels["distribution"][lang].format(lift=x_label), color_discrete_sequence=[color])
