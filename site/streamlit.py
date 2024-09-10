@@ -56,10 +56,6 @@ def plot_position(df, lift, user_value, color, lang, y_label=None, x_label=None)
         x=user_value,
         y=max(df[lift].value_counts()) * 0.9,  # Position annotation at 90% of max y-value
         text=annotation_text,
-        arrowhead=2,
-        arrowsize=1.5,
-        arrowcolor="red",
-        ax=0,  # Shift the arrow slightly to the left
         ay=-40,
         font=dict(color="red", size=14, family="Arial")  # Red color for the text
     )
