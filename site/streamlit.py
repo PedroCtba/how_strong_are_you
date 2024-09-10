@@ -114,66 +114,72 @@ squat = st.number_input(labels["squat"][lang], min_value=0, max_value=500, step=
 bench = st.number_input(labels["bench"][lang], min_value=0, max_value=500, step=1)
 deadlift = st.number_input(labels["deadlift"][lang], min_value=0, max_value=500, step=1)
 
-# Load and filter the data
-df = load_data()
-df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality, division=division, federation=federation, country=country)
-
 # Calculate the user's total
 user_total = calculate_total(squat, bench, deadlift)
 
 # Only display if all inputs are valid
 if squat > 0 and bench > 0 and deadlift > 0:
-    st.success(labels["submit"][lang])
+    # Load and filter the data
+    df = load_data()
+    df = filter_data(df=df, sex=sex, weight_class=weight_class, modality=modality, division=division, federation=federation, country=country)
 
-    # Plot the user's position for each lift using tabs with different colors and language-based labels
-    tab1, tab2, tab3, tab4 = st.tabs([labels["squat"][lang], labels["bench"][lang], labels["deadlift"][lang], "Total"])
-    
-    with tab1:
-        st.plotly_chart(plot_position(df, "Best3SquatKg", squat, "blue", lang, x_label=labels["squat"][lang]))
-    
-    with tab2:
-        st.plotly_chart(plot_position(df, "Best3BenchKg", bench, "green", lang, x_label=labels["bench"][lang]))
-    
-    with tab3:
-        st.plotly_chart(plot_position(df, "Best3DeadliftKg", deadlift, "orange", lang, x_label=labels["deadlift"][lang]))
-    
-    with tab4:
-        fig = plot_position(df, "TotalKg", user_total, "purple", lang, x_label="Total")
-        st.plotly_chart(fig)
+    # Check if filtered data is empty
+    if df.empty:
+        st.error(labels["no_data"][lang])  # Display an error message if no data is available
 
-    # Calculate the percentile for each lift and total
-    total_percentile = calculate_percentile(df, "TotalKg", user_total).round(2)
-    squat_percentile = calculate_percentile(df, "Best3SquatKg", squat).round(2)
-    bench_percentile = calculate_percentile(df, "Best3BenchKg", bench).round(2)
-    deadlift_percentile = calculate_percentile(df, "Best3DeadliftKg", deadlift).round(2)
-
-    # Display the percentile for each lift
-    st.subheader(labels["percentile_generic"][lang])
-    st.write(labels["percentile_specific"][lang].format(lift=labels["squat"][lang], percentile=squat_percentile))
-    st.write(labels["percentile_specific"][lang].format(lift=labels["bench"][lang], percentile=bench_percentile))
-    st.write(labels["percentile_specific"][lang].format(lift=labels["deadlift"][lang], percentile=deadlift_percentile))
-
-    # Determine the user's weakest and strongest lift
-    weakest_lift = min(squat_percentile, bench_percentile, deadlift_percentile)
-    strongest_lift = max(squat_percentile, bench_percentile, deadlift_percentile)
-
-    if squat_percentile == weakest_lift:
-        weakest_lift_name = labels["squat"][lang]
-    elif bench_percentile == weakest_lift:
-        weakest_lift_name = labels["bench"][lang]
+    # Else, continue app
     else:
-        weakest_lift_name = labels["deadlift"][lang]
-
-    if squat_percentile == strongest_lift:
-        strongest_lift_name = labels["squat"][lang]
-    elif bench_percentile == strongest_lift:
-        strongest_lift_name = labels["bench"][lang]
-    else:
-        strongest_lift_name = labels["deadlift"][lang]
-
-    st.subheader(labels["weakest_strongest"][lang])
-    st.write(f"{labels["weakest"][lang]} {weakest_lift_name}")
-    st.write(f"{labels["strongest"][lang]} {strongest_lift_name}")
+        st.success(labels["submit"][lang])
+    
+        # Plot the user's position for each lift using tabs with different colors and language-based labels
+        tab1, tab2, tab3, tab4 = st.tabs([labels["squat"][lang], labels["bench"][lang], labels["deadlift"][lang], "Total"])
+        
+        with tab1:
+            st.plotly_chart(plot_position(df, "Best3SquatKg", squat, "blue", lang, x_label=labels["squat"][lang]))
+        
+        with tab2:
+            st.plotly_chart(plot_position(df, "Best3BenchKg", bench, "green", lang, x_label=labels["bench"][lang]))
+        
+        with tab3:
+            st.plotly_chart(plot_position(df, "Best3DeadliftKg", deadlift, "orange", lang, x_label=labels["deadlift"][lang]))
+        
+        with tab4:
+            fig = plot_position(df, "TotalKg", user_total, "purple", lang, x_label="Total")
+            st.plotly_chart(fig)
+    
+        # Calculate the percentile for each lift and total
+        total_percentile = calculate_percentile(df, "TotalKg", user_total).round(2)
+        squat_percentile = calculate_percentile(df, "Best3SquatKg", squat).round(2)
+        bench_percentile = calculate_percentile(df, "Best3BenchKg", bench).round(2)
+        deadlift_percentile = calculate_percentile(df, "Best3DeadliftKg", deadlift).round(2)
+    
+        # Display the percentile for each lift
+        st.subheader(labels["percentile_generic"][lang])
+        st.write(labels["percentile_specific"][lang].format(lift=labels["squat"][lang], percentile=squat_percentile))
+        st.write(labels["percentile_specific"][lang].format(lift=labels["bench"][lang], percentile=bench_percentile))
+        st.write(labels["percentile_specific"][lang].format(lift=labels["deadlift"][lang], percentile=deadlift_percentile))
+    
+        # Determine the user's weakest and strongest lift
+        weakest_lift = min(squat_percentile, bench_percentile, deadlift_percentile)
+        strongest_lift = max(squat_percentile, bench_percentile, deadlift_percentile)
+    
+        if squat_percentile == weakest_lift:
+            weakest_lift_name = labels["squat"][lang]
+        elif bench_percentile == weakest_lift:
+            weakest_lift_name = labels["bench"][lang]
+        else:
+            weakest_lift_name = labels["deadlift"][lang]
+    
+        if squat_percentile == strongest_lift:
+            strongest_lift_name = labels["squat"][lang]
+        elif bench_percentile == strongest_lift:
+            strongest_lift_name = labels["bench"][lang]
+        else:
+            strongest_lift_name = labels["deadlift"][lang]
+    
+        st.subheader(labels["weakest_strongest"][lang])
+        st.write(f"{labels["weakest"][lang]} {weakest_lift_name}")
+        st.write(f"{labels["strongest"][lang]} {strongest_lift_name}")
 
 else:
     st.warning(labels["awaiting_filters"][lang])
