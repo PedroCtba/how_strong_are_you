@@ -54,7 +54,7 @@ labels = {
     "bench": {"English": "Bench", "Português": "Supino"},
     "deadlift": {"English": "Deadlift", "Português": "Levantamento Terra"},
     "submit": {"English": "Ready to display results!", "Português": "Pronto para exibir os resultados!"},
-    "missing_data": {"English": "Please, fill in the filters to see better comparisons and results.",
+    "awaiting_filters": {"English": "Please, fill in the filters to see better comparisons and results.",
                      "Português": "Por favor, preencha os filtros para visualizar melhores comparacões e resultados."},
     "distribution": {"English": "Distribution of {lift} Values", "Português": "Distribuição dos Valores de {lift}"},
     "percentile_generic": {"English": "Your relative performance on each lift", "Português": "Sua performance relativa em cada levantamento"},
