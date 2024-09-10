@@ -74,5 +74,5 @@ labels = {
         "Português": "Frequência"},
     "filter_all": {
         "English": "All",
-        "Português": "Todos"},
+        "Português": "All"},
     }
