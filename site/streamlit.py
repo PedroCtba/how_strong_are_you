@@ -117,7 +117,7 @@ if squat > 0 and bench > 0 and deadlift > 0:
     st.success(labels["submit"][lang])
 
     # Plot the user's position for each lift using tabs with different colors and language-based labels
-    tab1, tab2, tab3, tab4 = st.tabs([labels["squat"][lang], labels["bench"][lang], labels["deadlift"][lang], labels["total"][lang]])
+    tab1, tab2, tab3, tab4 = st.tabs([labels["squat"][lang], labels["bench"][lang], labels["deadlift"][lang], "Total")
     
     with tab1:
         st.plotly_chart(plot_position(df, "Best3SquatKg", squat, "blue", lang, x_label=labels["squat"][lang]))
@@ -129,7 +129,7 @@ if squat > 0 and bench > 0 and deadlift > 0:
         st.plotly_chart(plot_position(df, "Best3DeadliftKg", deadlift, "orange", lang, x_label=labels["deadlift"][lang]))
     
     with tab4:
-        fig = plot_position(df, "TotalKg", user_total, "purple", lang, x_label=labels["total"][lang])
+        fig = plot_position(df, "TotalKg", user_total, "purple", lang, x_label="Total")
         st.plotly_chart(fig)
 
     # Calculate the percentile for each lift and total
