@@ -68,9 +68,8 @@ labels = {
             "Português": "Pior levantamento:"},
     "strongest": {
             "English": "Strongest Lift:",
-            "Português": "Melhor Levantamento:"}
-    },
+            "Português": "Melhor Levantamento:"},
     "y_axis_label": {
         "English": "Frequency",
-        "Português": "Frequência"
+        "Português": "Frequência"},
     },
