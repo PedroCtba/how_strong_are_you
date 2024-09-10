@@ -72,4 +72,4 @@ labels = {
     "y_axis_label": {
         "English": "Frequency",
         "Português": "Frequência"},
-    },
+    }
