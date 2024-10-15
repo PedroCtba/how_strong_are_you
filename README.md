@@ -17,10 +17,7 @@ This project is a **Streamlit** application that visualizes and analyzes powerli
 - **Plotly**: For creating visualizations (histograms).
 - **Parquet**: Used for efficient data storage.
 
-## Installation
+## Use
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/yourusername/powerlifting-app.git
-   cd powerlifting
+1. **Go to:**
+https://howstrongareyou.streamlit.app/
